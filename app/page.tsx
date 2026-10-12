@@ -68,8 +68,8 @@ export default function Page() {
             ⛑️
           </span>
           <div>
-            <h1>ReadyRAG</h1>
-            <p>Disaster preparedness answers from official FEMA guides</p>
+            <h1>DisasterGuide</h1>
+            <p>Answers from FEMA’s published guides</p>
           </div>
         </div>
         {messages.length > 0 && (
@@ -124,7 +124,7 @@ export default function Page() {
         )}
       </form>
       <p className="footnote">
-        In an emergency, call 911. Answers can be wrong and some guides date from 2004. Check the cited page and{" "}
+        In an emergency, call 911. Independent project, not affiliated with or endorsed by FEMA. Answers can be wrong and some guides date from 2004. Check the cited page and{" "}
         <a href="https://www.ready.gov" target="_blank" rel="noreferrer">
           ready.gov
         </a>

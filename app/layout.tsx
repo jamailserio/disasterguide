@@ -6,21 +6,21 @@ const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
   : "http://localhost:3000";
 
 const description =
-  "Ask questions about disaster preparedness and FEMA disaster assistance. Answers come from six official FEMA publications, with page-level citations you can open and check.";
+  "Ask questions about preparing for and recovering from disasters. Answers from FEMA’s published guides, with page-level citations you can open and check. Independent project, not affiliated with or endorsed by FEMA.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: "ReadyRAG: Disaster Preparedness Q&A from FEMA Guides",
+  title: "DisasterGuide: Disaster Preparedness Q&A",
   description,
   openGraph: {
-    title: "ReadyRAG: Disaster Preparedness Q&A from FEMA Guides",
+    title: "DisasterGuide: Disaster Preparedness Q&A",
     description,
     type: "website",
-    siteName: "ReadyRAG",
+    siteName: "DisasterGuide",
   },
   twitter: {
     card: "summary",
-    title: "ReadyRAG: Disaster Preparedness Q&A",
+    title: "DisasterGuide: Disaster Preparedness Q&A",
     description,
   },
 };

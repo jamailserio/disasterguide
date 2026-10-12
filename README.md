@@ -1,8 +1,10 @@
-# ReadyRAG: Disaster Preparedness Q&A from FEMA Guides
+# DisasterGuide: Disaster Preparedness Q&A
 
 **Live app:** https://YOUR-APP.vercel.app  ← _replace after deploying_
 
-ReadyRAG is a chat app that answers questions about getting ready for, and recovering from, disasters. It answers **only** from six official FEMA publications and cites the document and page for every point. Clicking a citation opens that exact PDF page.
+DisasterGuide is a chat app that answers questions about getting ready for, and recovering from, disasters. It answers **only** from six official FEMA publications and cites the document and page for every point. Clicking a citation opens that exact PDF page.
+
+> DisasterGuide is an independent student project. It is not affiliated with or endorsed by FEMA; it only quotes FEMA's public-domain publications.
 
 Built for the Week 14 "Ship Your Own RAG" mini-project, starting from the Week 14A starter (Next.js 15 + Vercel AI SDK + Upstash Vector).
 
