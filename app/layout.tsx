@@ -6,7 +6,7 @@ const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
   : "http://localhost:3000";
 
 const description =
-  "Ask questions about preparing for and recovering from disasters. Answers from FEMA’s published guides, with page-level citations you can open and check. Independent project, not affiliated with or endorsed by FEMA.";
+  "Ask questions about preparing for and recovering from disasters. Answers from published FEMA publications, with page-level citations you can open and check. Independent project, not affiliated with or endorsed by FEMA.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

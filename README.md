@@ -1,6 +1,6 @@
 # DisasterGuide: Disaster Preparedness Q&A
 
-**Live app:** https://YOUR-APP.vercel.app  ← _replace after deploying_
+**Live app:** https://disasterguide.vercel.app/  ← _replace after deploying_
 
 DisasterGuide is a chat app that answers questions about getting ready for, and recovering from, disasters. It answers **only** from six official FEMA publications and cites the document and page for every point. Clicking a citation opens that exact PDF page.
 
