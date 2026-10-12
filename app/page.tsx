@@ -2,7 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import type { Message } from "ai";
-import { useEffect, useRef, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import ReactMarkdown from "react-markdown";
 import { EXAMPLE_QUESTIONS, LIBRARY } from "@/lib/library";
 import type { RetrievedSource } from "@/lib/types";
@@ -139,8 +139,8 @@ function EmptyState({ onPick }: { onPick: (q: string) => void }) {
     <section className="empty">
       <h2>Ask a question about getting ready for, or recovering from, a disaster.</h2>
       <p className="lead">
-        I search six FEMA publications and answer only from what they say, citing the page for every point. Click a citation to open
-        that exact page of the PDF.
+        My search is based on six FEMA publications and answer only from what they say, citing the source document for every point. Click a citation to open
+        that exact page of the source PDF.
       </p>
 
       <h3>Try one of these</h3>
@@ -210,33 +210,85 @@ function AssistantMessage({ message }: { message: Message }) {
   );
 }
 
+// Short label for the kind of document a source comes from.
+function docType(kind: string) {
+  const k = kind.toLowerCase();
+  if (k.includes("policy")) return "Policy";
+  if (k.includes("checklist")) return "Checklist";
+  if (k.includes("brief")) return "Brief";
+  return "Guide";
+}
+
+// Plain-language match strength instead of a raw similarity score.
+// Thresholds suit OpenAI text-embedding-3-small cosine scores (roughly 0.2-0.8).
+function matchLabel(score: number) {
+  if (score >= 0.55) return { text: "Strong match", cls: "strong-match" };
+  if (score >= 0.4) return { text: "Good match", cls: "good-match" };
+  return { text: "Weak match", cls: "weak-match" };
+}
+
+const OUTDATED_BEFORE = 2015; // sources older than this get a warning badge
+
+function SourceCard({ s }: { s: SourceWithCite }) {
+  const match = matchLabel(s.score);
+  const outdated = s.year < OUTDATED_BEFORE;
+  return (
+    <li className={s.cited ? "cited" : ""}>
+      <div className="source-head">
+        <a href={s.url} target="_blank" rel="noreferrer">
+          {s.shortTitle}, p. {s.page}
+        </a>
+        <span className="badge">{docType(s.kind)}</span>
+        {outdated ? (
+          <span className="badge outdated" title="Published before 2015. Check fema.gov for current guidance.">
+            {s.year} · may be outdated
+          </span>
+        ) : (
+          <span className="badge">{s.year}</span>
+        )}
+        {s.cited && <span className="badge strong">cited</span>}
+      </div>
+      <div className="source-section">
+        {s.section} ·{" "}
+        <span className={`match ${match.cls}`} title={`Similarity score ${s.score.toFixed(2)}`}>
+          {match.text}
+        </span>
+      </div>
+      <details>
+        <summary>{s.text.slice(0, 150)}…</summary>
+        <p>{s.text}</p>
+      </details>
+    </li>
+  );
+}
+
 function Sources({ sources }: { sources: SourceWithCite[] }) {
-  const cited = sources.filter((s) => s.cited).length;
+  const [showAll, setShowAll] = useState(false);
+  const cited = sources.filter((s) => s.cited);
+  const notCited = sources.filter((s) => !s.cited);
+  // If the answer cited nothing (e.g. "I couldn't find that"), show what was searched instead.
+  const main = cited.length > 0 ? cited : notCited;
+  const extra = cited.length > 0 ? notCited : [];
+
   return (
     <section className="sources" aria-label="Sources">
       <h4>
         Sources
-        <span>{cited > 0 ? `${cited} cited · ${sources.length} retrieved` : `${sources.length} retrieved`}</span>
+        <span>{cited.length > 0 ? `${cited.length} cited in this answer` : `${sources.length} searched, none cited`}</span>
       </h4>
       <ol>
-        {sources.map((s) => (
-          <li key={s.ref} className={s.cited ? "cited" : ""}>
-            <div className="source-head">
-              <a href={s.url} target="_blank" rel="noreferrer">
-                {s.shortTitle}, p. {s.page}
-              </a>
-              <span className="badge">{s.year}</span>
-              {s.cited && <span className="badge strong">cited</span>}
-              <span className="score">match {s.score.toFixed(2)}</span>
-            </div>
-            <div className="source-section">{s.section}</div>
-            <details>
-              <summary>{s.text.slice(0, 150)}…</summary>
-              <p>{s.text}</p>
-            </details>
-          </li>
+        {main.map((s) => (
+          <SourceCard key={s.ref} s={s} />
         ))}
+        {showAll && extra.map((s) => <SourceCard key={s.ref} s={s} />)}
       </ol>
+      {extra.length > 0 && (
+        <button type="button" className="show-more" onClick={() => setShowAll((v) => !v)} aria-expanded={showAll}>
+          {showAll
+            ? "Hide passages that weren’t used"
+            : `Show ${extra.length} more passage${extra.length === 1 ? "" : "s"} that ${extra.length === 1 ? "was" : "were"} searched but not used`}
+        </button>
+      )}
     </section>
   );
 }
